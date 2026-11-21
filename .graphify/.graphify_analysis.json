@@ -1,0 +1,788 @@
+{
+  "communities": {
+    "0": [
+      "account",
+      "customaccountrepository",
+      "customercardview",
+      "customerprofileview",
+      "customerriskview",
+      "messaging_accounteventconsumer",
+      "movement",
+      "persistence_accountmapper",
+      "persistence_accountmapper_accountmapper",
+      "persistence_accountmapper_accountmapper_toaccount",
+      "persistence_accountmapper_accountmapper_todocument",
+      "persistence_accountmapper_accountmapper_tomovement",
+      "persistence_customaccountrepository",
+      "persistence_customaccountrepository_customaccountrepository",
+      "persistence_customaccountrepository_customaccountrepository_countmovementsinmonth",
+      "persistence_customaccountrepository_customaccountrepository_findbycustomerandtypeandstatus",
+      "persistence_customaccountrepository_customaccountrepository_findmovementsbyaccountanddaterange",
+      "persistence_customaccountrepositoryimpl",
+      "persistence_customaccountrepositoryimpl_customaccountrepositoryimpl",
+      "persistence_customaccountrepositoryimpl_customaccountrepositoryimpl_countmovementsinmonth",
+      "persistence_customaccountrepositoryimpl_customaccountrepositoryimpl_customaccountrepositoryimpl",
+      "persistence_customaccountrepositoryimpl_customaccountrepositoryimpl_findbycustomerandtypeandstatus",
+      "persistence_customaccountrepositoryimpl_customaccountrepositoryimpl_findmovementsbyaccountanddaterange",
+      "persistence_processedeventrepository",
+      "persistence_processedeventrepository_processedeventrepository",
+      "persistence_processedeventrepository_processedeventrepository_findbyid",
+      "processedevent",
+      "reactivemongorepository",
+      "repository_accountrepository",
+      "repository_accountrepository_accountrepository",
+      "repository_accountrepository_accountrepository_countbycustomeridandtype",
+      "repository_accountrepository_accountrepository_existsbycustomeridandtype",
+      "repository_accountrepository_accountrepository_findallbycustomerid",
+      "repository_accountrepository_accountrepository_findallbycustomeridandstatus",
+      "repository_accountrepository_accountrepository_findallbycustomeridandtype",
+      "repository_accountrepository_accountrepository_findbyaccountnumber",
+      "repository_customercardviewrepository",
+      "repository_customercardviewrepository_customercardviewrepository",
+      "repository_customercardviewrepository_customercardviewrepository_findbycustomerid",
+      "repository_customerprofileviewrepository",
+      "repository_customerprofileviewrepository_customerprofileviewrepository",
+      "repository_customerprofileviewrepository_customerprofileviewrepository_findbycustomerid",
+      "repository_customerriskviewrepository",
+      "repository_customerriskviewrepository_customerriskviewrepository",
+      "repository_customerriskviewrepository_customerriskviewrepository_findbycustomerid",
+      "repository_movementrepository",
+      "repository_movementrepository_movementrepository",
+      "repository_movementrepository_movementrepository_countbyaccountidandcurrentmonth",
+      "repository_movementrepository_movementrepository_findallbyaccountidandoccurredatbetween",
+      "repository_movementrepository_movementrepository_findallbyaccountidorderbyoccurredatdesc",
+      "repository_movementrepository_movementrepository_findallbycustomeridorderbyoccurredatdesc",
+      "repository_movementrepository_movementrepository_findfirstbyaccountidorderbyoccurredatdesc",
+      "service_accountservice",
+      "string"
+    ],
+    "1": [
+      "service_accountservice_accountservice",
+      "service_accountservice_accountservice_buildaccount",
+      "service_accountservice_accountservice_buildidempotencykey",
+      "service_accountservice_accountservice_buildmovement",
+      "service_accountservice_accountservice_buildmovementevent",
+      "service_accountservice_accountservice_calculatecommission",
+      "service_accountservice_accountservice_checkaccountlimits",
+      "service_accountservice_accountservice_checkandmarkprocessed",
+      "service_accountservice_accountservice_checkcreditcardrequirement",
+      "service_accountservice_accountservice_checkriskview",
+      "service_accountservice_accountservice_closeaccount",
+      "service_accountservice_accountservice_createandsaveaccount",
+      "service_accountservice_accountservice_createprocessedevent",
+      "service_accountservice_accountservice_deposit",
+      "service_accountservice_accountservice_findbycustomer",
+      "service_accountservice_accountservice_findbyid",
+      "service_accountservice_accountservice_generateaccountnumber",
+      "service_accountservice_accountservice_getbalance",
+      "service_accountservice_accountservice_getcardviewrepository",
+      "service_accountservice_accountservice_getprofilevieworerror",
+      "service_accountservice_accountservice_getprofileviewrepository",
+      "service_accountservice_accountservice_getriskviewrepository",
+      "service_accountservice_accountservice_invalidatecache",
+      "service_accountservice_accountservice_isvalidpersonalcurrent",
+      "service_accountservice_accountservice_isvalidpersonalsavings",
+      "service_accountservice_accountservice_openaccount",
+      "service_accountservice_accountservice_parseaccounttype",
+      "service_accountservice_accountservice_processmovement",
+      "service_accountservice_accountservice_publishaccountclosedevent",
+      "service_accountservice_accountservice_publishaccountopenedevent",
+      "service_accountservice_accountservice_publishdebitpaymentsettledevent",
+      "service_accountservice_accountservice_publishmovementevent",
+      "service_accountservice_accountservice_publishtransfersettledevent",
+      "service_accountservice_accountservice_settledebitpayment",
+      "service_accountservice_accountservice_settletransfer",
+      "service_accountservice_accountservice_toaccountresult",
+      "service_accountservice_accountservice_tomovementresult",
+      "service_accountservice_accountservice_validateaccountformovement",
+      "service_accountservice_accountservice_validateanddebitaccount",
+      "service_accountservice_accountservice_validateandtransfer",
+      "service_accountservice_accountservice_validatecustomerforaccountopening",
+      "service_accountservice_accountservice_validateriskfortransfer",
+      "service_accountservice_accountservice_validatetermfixedmovement",
+      "service_accountservice_accountservice_withdrawal"
+    ],
+    "2": [
+      "messaging_accounteventconsumer_accounteventconsumer",
+      "messaging_accounteventconsumer_accounteventconsumer_buildkey",
+      "messaging_accounteventconsumer_accounteventconsumer_createprocessedevent",
+      "messaging_accounteventconsumer_accounteventconsumer_createprofileview",
+      "messaging_accounteventconsumer_accounteventconsumer_markviewsdeleted",
+      "messaging_accounteventconsumer_accounteventconsumer_oncardclosed",
+      "messaging_accounteventconsumer_accounteventconsumer_oncardopened",
+      "messaging_accounteventconsumer_accounteventconsumer_oncreditoverdue",
+      "messaging_accounteventconsumer_accounteventconsumer_oncustomerdeleted",
+      "messaging_accounteventconsumer_accounteventconsumer_oncustomerregistered",
+      "messaging_accounteventconsumer_accounteventconsumer_oncustomerupdated",
+      "messaging_accounteventconsumer_accounteventconsumer_ondebitpaymentrequested",
+      "messaging_accounteventconsumer_accounteventconsumer_ontransferrequested",
+      "messaging_accounteventconsumer_accounteventconsumer_processifnew",
+      "messaging_accounteventconsumer_accounteventconsumer_tocompletable",
+      "messaging_accounteventconsumer_accounteventconsumer_toflowable",
+      "messaging_accounteventconsumer_accounteventconsumer_tosingle",
+      "messaging_accounteventconsumer_accounteventconsumer_updatecardviewclosed",
+      "messaging_accounteventconsumer_accounteventconsumer_updatecardviewopened",
+      "messaging_accounteventconsumer_accounteventconsumer_updateprofileview",
+      "messaging_accounteventconsumer_accounteventconsumer_updateriskview"
+    ],
+    "3": [
+      "model_customerprofileviewtest",
+      "model_customerprofileviewtest_customerprofileviewtest",
+      "model_customerprofileviewtest_customerprofileviewtest_canoperate_whenactive_returnstrue",
+      "model_customerprofileviewtest_customerprofileviewtest_canoperate_whenblocked_returnsfalse",
+      "model_customerprofileviewtest_customerprofileviewtest_canoperate_whendeleted_returnsfalse",
+      "model_customerprofileviewtest_customerprofileviewtest_isenterprise_whenenterprise_returnstrue",
+      "model_customerprofileviewtest_customerprofileviewtest_isenterprise_whenpersonal_returnsfalse",
+      "model_customerprofileviewtest_customerprofileviewtest_ispersonal_whenenterprise_returnsfalse",
+      "model_customerprofileviewtest_customerprofileviewtest_ispersonal_whenpersonal_returnstrue",
+      "model_customerprofileviewtest_customerprofileviewtest_ispyme_whenpyme_returnstrue",
+      "model_customerprofileviewtest_customerprofileviewtest_ispyme_whenstandard_returnsfalse",
+      "model_customerprofileviewtest_customerprofileviewtest_isvip_whenstandard_returnsfalse",
+      "model_customerprofileviewtest_customerprofileviewtest_isvip_whenvip_returnstrue"
+    ],
+    "4": [
+      "model_accounttest",
+      "model_accounttest_accounttest",
+      "model_accounttest_accounttest_builder_setsallfields",
+      "model_accounttest_accounttest_canoperate_whenblocked_returnsfalse",
+      "model_accounttest_accounttest_canoperate_whenclosed_returnsfalse",
+      "model_accounttest_accounttest_canoperate_whenopen_returnstrue",
+      "model_accounttest_accounttest_hasexceededfreemovements_whenexceeded_returnstrue",
+      "model_accounttest_accounttest_hasexceededfreemovements_whennotexceeded_returnsfalse",
+      "model_accounttest_accounttest_hasexceededfreemovements_whennullcount_returnsfalse",
+      "model_accounttest_accounttest_hasexceededfreemovements_whennulllimit_returnsfalse",
+      "model_accounttest_accounttest_incrementmovementcount_newmonth_resetscounter",
+      "model_accounttest_accounttest_incrementmovementcount_samemonth_incrementscounter"
+    ],
+    "5": [
+      "controller_accountcontroller",
+      "controller_accountcontroller_accountcontroller",
+      "controller_accountcontroller_accountcontroller_closeaccount",
+      "controller_accountcontroller_accountcontroller_createaccount",
+      "controller_accountcontroller_accountcontroller_deposit",
+      "controller_accountcontroller_accountcontroller_findall",
+      "controller_accountcontroller_accountcontroller_findbyid",
+      "controller_accountcontroller_accountcontroller_getbalance",
+      "controller_accountcontroller_accountcontroller_getmovements",
+      "controller_accountcontroller_accountcontroller_withdrawal"
+    ],
+    "6": [
+      "messaging_accounteventpublisher",
+      "messaging_accounteventpublisher_accounteventpublisher",
+      "messaging_accounteventpublisher_accounteventpublisher_publishclosed",
+      "messaging_accounteventpublisher_accounteventpublisher_publishdebitpaymentsettled",
+      "messaging_accounteventpublisher_accounteventpublisher_publishmovement",
+      "messaging_accounteventpublisher_accounteventpublisher_publishopened",
+      "messaging_accounteventpublisher_accounteventpublisher_publishtransfersettled"
+    ],
+    "7": [
+      "model_customerprofileview",
+      "model_customerprofileview_customerprofileview",
+      "model_customerprofileview_customerprofileview_canoperate",
+      "model_customerprofileview_customerprofileview_isenterprise",
+      "model_customerprofileview_customerprofileview_ispersonal",
+      "model_customerprofileview_customerprofileview_ispyme",
+      "model_customerprofileview_customerprofileview_isvip"
+    ],
+    "8": [
+      "rest_globalexceptionhandler",
+      "rest_globalexceptionhandler_globalexceptionhandler",
+      "rest_globalexceptionhandler_globalexceptionhandler_handlebusinessexception",
+      "rest_globalexceptionhandler_globalexceptionhandler_handlegenericexception",
+      "rest_globalexceptionhandler_globalexceptionhandler_handlevalidationexception",
+      "rest_globalexceptionhandler_globalexceptionhandler_maperrorcodetostatus"
+    ],
+    "9": [
+      "dto_accountrequest",
+      "dto_accountrequest_accountholderrequest",
+      "dto_accountrequest_accountrequest",
+      "dto_accountrequest_accountrequest_tocommand",
+      "dto_accountrequest_accountsignerrequest"
+    ],
+    "10": [
+      "dto_accountrequesttest",
+      "dto_accountrequesttest_accountrequesttest",
+      "dto_accountrequesttest_accountrequesttest_builder_setsallfields",
+      "dto_accountrequesttest_accountrequesttest_setters_work",
+      "dto_accountrequesttest_accountrequesttest_tocommand_createscommand"
+    ],
+    "11": [
+      "dto_accountresponse",
+      "dto_accountresponse_accountholderresponse",
+      "dto_accountresponse_accountresponse",
+      "dto_accountresponse_accountresponse_from",
+      "dto_accountresponse_accountsignerresponse"
+    ],
+    "12": [
+      "exception_businessexception",
+      "exception_businessexception_businessexception",
+      "exception_businessexception_businessexception_businessexception",
+      "exception_businessexception_businessexception_getcode",
+      "runtimeexception"
+    ],
+    "13": [
+      "model_account",
+      "model_account_account",
+      "model_account_account_canoperate",
+      "model_account_account_hasexceededfreemovements",
+      "model_account_account_incrementmovementcount"
+    ],
+    "14": [
+      "config_cachepropertiestest",
+      "config_cachepropertiestest_cachepropertiestest",
+      "config_cachepropertiestest_cachepropertiestest_defaultvalues",
+      "config_cachepropertiestest_cachepropertiestest_setters"
+    ],
+    "15": [
+      "config_redisconfig",
+      "config_redisconfig_redisconfig",
+      "config_redisconfig_redisconfig_objectmapper",
+      "config_redisconfig_redisconfig_reactivestringredistemplate"
+    ],
+    "16": [
+      "exception_businessexceptiontest",
+      "exception_businessexceptiontest_businessexceptiontest",
+      "exception_businessexceptiontest_businessexceptiontest_constructor_setscodeandmessage",
+      "exception_businessexceptiontest_businessexceptiontest_isruntimeexception"
+    ],
+    "17": [
+      "model_customerriskviewtest",
+      "model_customerriskviewtest_customerriskviewtest",
+      "model_customerriskviewtest_customerriskviewtest_builder_nooverduedebt",
+      "model_customerriskviewtest_customerriskviewtest_builder_setsallfields"
+    ],
+    "18": [
+      "model_movementtest",
+      "model_movementtest_movementtest",
+      "model_movementtest_movementtest_builder_setsallfields",
+      "model_movementtest_movementtest_movementtype_enumvalues"
+    ],
+    "19": [
+      "service_accountresult",
+      "service_accountresult_accountholderinfo",
+      "service_accountresult_accountresult",
+      "service_accountresult_accountsignerinfo"
+    ],
+    "20": [
+      "service_openaccountcommand",
+      "service_openaccountcommand_accountholdercommand",
+      "service_openaccountcommand_accountsignercommand",
+      "service_openaccountcommand_openaccountcommand"
+    ],
+    "21": [
+      "accounts_accountsserviceapplication",
+      "accounts_accountsserviceapplication_accountsserviceapplication",
+      "accounts_accountsserviceapplication_accountsserviceapplication_main"
+    ],
+    "22": [
+      "config_openapiconfig",
+      "config_openapiconfig_openapiconfig",
+      "config_openapiconfig_openapiconfig_customopenapi"
+    ],
+    "23": [
+      "config_resilienceconfig",
+      "config_resilienceconfig_resilienceconfig",
+      "config_resilienceconfig_resilienceconfig_globalcustomconfiguration"
+    ],
+    "24": [
+      "dto_accountresponsetest",
+      "dto_accountresponsetest_accountresponsetest",
+      "dto_accountresponsetest_accountresponsetest_from_convertsaccountresulttoresponse"
+    ],
+    "25": [
+      "dto_movementresponse",
+      "dto_movementresponse_movementresponse",
+      "dto_movementresponse_movementresponse_from"
+    ],
+    "26": [
+      "dto_movementresponsetest",
+      "dto_movementresponsetest_movementresponsetest",
+      "dto_movementresponsetest_movementresponsetest_builder_setsallfields"
+    ],
+    "27": [
+      "event_accountclosedeventtest",
+      "event_accountclosedeventtest_accountclosedeventtest",
+      "event_accountclosedeventtest_accountclosedeventtest_builder_setsallfields"
+    ],
+    "28": [
+      "event_accountmovementregisteredeventtest",
+      "event_accountmovementregisteredeventtest_accountmovementregisteredeventtest",
+      "event_accountmovementregisteredeventtest_accountmovementregisteredeventtest_builder_setsallfields"
+    ],
+    "29": [
+      "event_accountopenedeventtest",
+      "event_accountopenedeventtest_accountopenedeventtest",
+      "event_accountopenedeventtest_accountopenedeventtest_builder_setsallfields"
+    ],
+    "30": [
+      "event_cardclosedeventtest",
+      "event_cardclosedeventtest_cardclosedeventtest",
+      "event_cardclosedeventtest_cardclosedeventtest_builder_setsallfields"
+    ],
+    "31": [
+      "event_debitpaymentsettledeventtest",
+      "event_debitpaymentsettledeventtest_debitpaymentsettledeventtest",
+      "event_debitpaymentsettledeventtest_debitpaymentsettledeventtest_builder_setsallfields"
+    ],
+    "32": [
+      "event_topics",
+      "event_topics_topics",
+      "event_topics_topics_topics"
+    ],
+    "33": [
+      "event_topicstest",
+      "event_topicstest_topicstest",
+      "event_topicstest_topicstest_alltopicsaredefined"
+    ],
+    "34": [
+      "event_transfersettledeventtest",
+      "event_transfersettledeventtest_transfersettledeventtest",
+      "event_transfersettledeventtest_transfersettledeventtest_builder_setsallfields"
+    ],
+    "35": [
+      "exception_errorcodes",
+      "exception_errorcodes_errorcodes",
+      "exception_errorcodes_errorcodes_errorcodes"
+    ],
+    "36": [
+      "exception_errorcodestest",
+      "exception_errorcodestest_errorcodestest",
+      "exception_errorcodestest_errorcodestest_allcodesarenotnull"
+    ],
+    "37": [
+      "model_accountholdertest",
+      "model_accountholdertest_accountholdertest",
+      "model_accountholdertest_accountholdertest_builder_setsallfields"
+    ],
+    "38": [
+      "model_accountsignertest",
+      "model_accountsignertest_accountsignertest",
+      "model_accountsignertest_accountsignertest_builder_setsallfields"
+    ],
+    "39": [
+      "model_customercardviewtest",
+      "model_customercardviewtest_customercardviewtest",
+      "model_customercardviewtest_customercardviewtest_builder_setsallfields"
+    ],
+    "40": [
+      "service_debitpaymentcommandtest",
+      "service_debitpaymentcommandtest_debitpaymentcommandtest",
+      "service_debitpaymentcommandtest_debitpaymentcommandtest_builder_setsallfields"
+    ],
+    "41": [
+      "service_depositcommandtest",
+      "service_depositcommandtest_depositcommandtest",
+      "service_depositcommandtest_depositcommandtest_builder_setsallfields"
+    ],
+    "42": [
+      "service_openaccountcommandtest",
+      "service_openaccountcommandtest_openaccountcommandtest",
+      "service_openaccountcommandtest_openaccountcommandtest_builder_setsallfields"
+    ],
+    "43": [
+      "service_transfercommandtest",
+      "service_transfercommandtest_transfercommandtest",
+      "service_transfercommandtest_transfercommandtest_builder_setsallfields"
+    ],
+    "44": [
+      "service_withdrawalcommandtest",
+      "service_withdrawalcommandtest_withdrawalcommandtest",
+      "service_withdrawalcommandtest_withdrawalcommandtest_builder_setsallfields"
+    ],
+    "45": [
+      "config_cacheproperties",
+      "config_cacheproperties_cacheproperties"
+    ],
+    "46": [
+      "dto_apierror",
+      "dto_apierror_apierror"
+    ],
+    "47": [
+      "dto_balanceresponse",
+      "dto_balanceresponse_balanceresponse"
+    ],
+    "48": [
+      "dto_depositrequest",
+      "dto_depositrequest_depositrequest"
+    ],
+    "49": [
+      "dto_pageresponse",
+      "dto_pageresponse_pageresponse"
+    ],
+    "50": [
+      "dto_withdrawalrequest",
+      "dto_withdrawalrequest_withdrawalrequest"
+    ],
+    "51": [
+      "event_accountclosedevent",
+      "event_accountclosedevent_accountclosedevent"
+    ],
+    "52": [
+      "event_accountmovementregisteredevent",
+      "event_accountmovementregisteredevent_accountmovementregisteredevent"
+    ],
+    "53": [
+      "event_accountopenedevent",
+      "event_accountopenedevent_accountopenedevent"
+    ],
+    "54": [
+      "event_cardclosedevent",
+      "event_cardclosedevent_cardclosedevent"
+    ],
+    "55": [
+      "event_cardopenedevent",
+      "event_cardopenedevent_cardopenedevent"
+    ],
+    "56": [
+      "event_creditoverdueevent",
+      "event_creditoverdueevent_creditoverdueevent"
+    ],
+    "57": [
+      "event_customerdeletedevent",
+      "event_customerdeletedevent_customerdeletedevent"
+    ],
+    "58": [
+      "event_customerregisteredevent",
+      "event_customerregisteredevent_customerregisteredevent"
+    ],
+    "59": [
+      "event_customerupdatedevent",
+      "event_customerupdatedevent_customerupdatedevent"
+    ],
+    "60": [
+      "event_debitpaymentrequestedevent",
+      "event_debitpaymentrequestedevent_debitpaymentrequestedevent"
+    ],
+    "61": [
+      "event_debitpaymentsettledevent",
+      "event_debitpaymentsettledevent_debitpaymentsettledevent"
+    ],
+    "62": [
+      "event_transferrequestedevent",
+      "event_transferrequestedevent_transferrequestedevent"
+    ],
+    "63": [
+      "event_transfersettledevent",
+      "event_transfersettledevent_transfersettledevent"
+    ],
+    "64": [
+      "model_accountholder",
+      "model_accountholder_accountholder"
+    ],
+    "65": [
+      "model_accountsigner",
+      "model_accountsigner_accountsigner"
+    ],
+    "66": [
+      "model_customercardview",
+      "model_customercardview_customercardview"
+    ],
+    "67": [
+      "model_customerriskview",
+      "model_customerriskview_customerriskview"
+    ],
+    "68": [
+      "model_movement",
+      "model_movement_movement"
+    ],
+    "69": [
+      "persistence_processedevent",
+      "persistence_processedevent_processedevent"
+    ],
+    "70": [
+      "service_debitpaymentcommand",
+      "service_debitpaymentcommand_debitpaymentcommand"
+    ],
+    "71": [
+      "service_debitpaymentresult",
+      "service_debitpaymentresult_debitpaymentresult"
+    ],
+    "72": [
+      "service_depositcommand",
+      "service_depositcommand_depositcommand"
+    ],
+    "73": [
+      "service_movementresult",
+      "service_movementresult_movementresult"
+    ],
+    "74": [
+      "service_transfercommand",
+      "service_transfercommand_transfercommand"
+    ],
+    "75": [
+      "service_transferresult",
+      "service_transferresult_transferresult"
+    ],
+    "76": [
+      "service_withdrawalcommand",
+      "service_withdrawalcommand_withdrawalcommand"
+    ],
+    "77": [
+      "model_accountstatus"
+    ],
+    "78": [
+      "model_accounttype"
+    ],
+    "79": [
+      "model_movementtype"
+    ]
+  },
+  "cohesion": {
+    "0": 0.053109713487071976,
+    "1": 0.10570824524312897,
+    "2": 0.2714285714285714,
+    "3": 0.15384615384615385,
+    "4": 0.16666666666666666,
+    "5": 0.2,
+    "6": 0.2857142857142857,
+    "7": 0.2857142857142857,
+    "8": 0.4,
+    "9": 0.4,
+    "10": 0.4,
+    "11": 0.4,
+    "12": 0.4,
+    "13": 0.4,
+    "14": 0.5,
+    "15": 0.5,
+    "16": 0.5,
+    "17": 0.5,
+    "18": 0.5,
+    "19": 0.5,
+    "20": 0.5,
+    "21": 0.6666666666666666,
+    "22": 0.6666666666666666,
+    "23": 0.6666666666666666,
+    "24": 0.6666666666666666,
+    "25": 0.6666666666666666,
+    "26": 0.6666666666666666,
+    "27": 0.6666666666666666,
+    "28": 0.6666666666666666,
+    "29": 0.6666666666666666,
+    "30": 0.6666666666666666,
+    "31": 0.6666666666666666,
+    "32": 0.6666666666666666,
+    "33": 0.6666666666666666,
+    "34": 0.6666666666666666,
+    "35": 0.6666666666666666,
+    "36": 0.6666666666666666,
+    "37": 0.6666666666666666,
+    "38": 0.6666666666666666,
+    "39": 0.6666666666666666,
+    "40": 0.6666666666666666,
+    "41": 0.6666666666666666,
+    "42": 0.6666666666666666,
+    "43": 0.6666666666666666,
+    "44": 0.6666666666666666,
+    "45": 1,
+    "46": 1,
+    "47": 1,
+    "48": 1,
+    "49": 1,
+    "50": 1,
+    "51": 1,
+    "52": 1,
+    "53": 1,
+    "54": 1,
+    "55": 1,
+    "56": 1,
+    "57": 1,
+    "58": 1,
+    "59": 1,
+    "60": 1,
+    "61": 1,
+    "62": 1,
+    "63": 1,
+    "64": 1,
+    "65": 1,
+    "66": 1,
+    "67": 1,
+    "68": 1,
+    "69": 1,
+    "70": 1,
+    "71": 1,
+    "72": 1,
+    "73": 1,
+    "74": 1,
+    "75": 1,
+    "76": 1,
+    "77": 1,
+    "78": 1,
+    "79": 1
+  },
+  "gods": [
+    {
+      "id": "service_accountservice_accountservice",
+      "label": "AccountService",
+      "edges": 44,
+      "degree": 44
+    },
+    {
+      "id": "messaging_accounteventconsumer_accounteventconsumer",
+      "label": "AccountEventConsumer",
+      "edges": 21,
+      "degree": 21
+    },
+    {
+      "id": "model_customerprofileviewtest_customerprofileviewtest",
+      "label": "CustomerProfileViewTest",
+      "edges": 12,
+      "degree": 12
+    },
+    {
+      "id": "model_accounttest_accounttest",
+      "label": "AccountTest",
+      "edges": 11,
+      "degree": 11
+    },
+    {
+      "id": "repository_accountrepository_accountrepository",
+      "label": "AccountRepository",
+      "edges": 10,
+      "degree": 10
+    },
+    {
+      "id": "repository_movementrepository_movementrepository",
+      "label": "MovementRepository",
+      "edges": 9,
+      "degree": 9
+    },
+    {
+      "id": "controller_accountcontroller_accountcontroller",
+      "label": "AccountController",
+      "edges": 9,
+      "degree": 9
+    },
+    {
+      "id": "model_customerprofileview_customerprofileview",
+      "label": "CustomerProfileView",
+      "edges": 6,
+      "degree": 6
+    },
+    {
+      "id": "messaging_accounteventpublisher_accounteventpublisher",
+      "label": "AccountEventPublisher",
+      "edges": 6,
+      "degree": 6
+    },
+    {
+      "id": "persistence_customaccountrepositoryimpl_customaccountrepositoryimpl",
+      "label": "CustomAccountRepositoryImpl",
+      "edges": 6,
+      "degree": 6
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `AccountService` connect `Community 1` to `Community 0`?",
+      "why": "High betweenness centrality (0.060) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `AccountEventConsumer` connect `Community 2` to `Community 0`?",
+      "why": "High betweenness centrality (0.031) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `AccountClosedEvent`, `AccountMovementRegisteredEvent`, `AccountOpenedEvent` to the rest of the system?",
+      "why": "42 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.053109713487071976 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.10570824524312897 - nodes in this community are weakly interconnected."
+    }
+  ],
+  "labels": {
+    "0": "Community 0",
+    "1": "Community 1",
+    "2": "Community 2",
+    "3": "Community 3",
+    "4": "Community 4",
+    "5": "Community 5",
+    "6": "Community 6",
+    "7": "Community 7",
+    "8": "Community 8",
+    "9": "Community 9",
+    "10": "Community 10",
+    "11": "Community 11",
+    "12": "Community 12",
+    "13": "Community 13",
+    "14": "Community 14",
+    "15": "Community 15",
+    "16": "Community 16",
+    "17": "Community 17",
+    "18": "Community 18",
+    "19": "Community 19",
+    "20": "Community 20",
+    "21": "Community 21",
+    "22": "Community 22",
+    "23": "Community 23",
+    "24": "Community 24",
+    "25": "Community 25",
+    "26": "Community 26",
+    "27": "Community 27",
+    "28": "Community 28",
+    "29": "Community 29",
+    "30": "Community 30",
+    "31": "Community 31",
+    "32": "Community 32",
+    "33": "Community 33",
+    "34": "Community 34",
+    "35": "Community 35",
+    "36": "Community 36",
+    "37": "Community 37",
+    "38": "Community 38",
+    "39": "Community 39",
+    "40": "Community 40",
+    "41": "Community 41",
+    "42": "Community 42",
+    "43": "Community 43",
+    "44": "Community 44",
+    "45": "Community 45",
+    "46": "Community 46",
+    "47": "Community 47",
+    "48": "Community 48",
+    "49": "Community 49",
+    "50": "Community 50",
+    "51": "Community 51",
+    "52": "Community 52",
+    "53": "Community 53",
+    "54": "Community 54",
+    "55": "Community 55",
+    "56": "Community 56",
+    "57": "Community 57",
+    "58": "Community 58",
+    "59": "Community 59",
+    "60": "Community 60",
+    "61": "Community 61",
+    "62": "Community 62",
+    "63": "Community 63",
+    "64": "Community 64",
+    "65": "Community 65",
+    "66": "Community 66",
+    "67": "Community 67",
+    "68": "Community 68",
+    "69": "Community 69",
+    "70": "Community 70",
+    "71": "Community 71",
+    "72": "Community 72",
+    "73": "Community 73",
+    "74": "Community 74",
+    "75": "Community 75",
+    "76": "Community 76",
+    "77": "Community 77",
+    "78": "Community 78",
+    "79": "Community 79"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
