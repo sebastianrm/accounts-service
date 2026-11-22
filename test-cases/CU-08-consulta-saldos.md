@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-08 | **SEC:** SEC008_consulta_saldo.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`
+**Fuente:** `../../docs/CASOS_PRUEBA`
 
 ---
 
@@ -58,7 +58,7 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-08 | Casos de prueba originales CP-049 a CP-053 |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-08 | Trazabilidad CU-08 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service detalle |
+| `../../docs/CASOS_PRUEBA` | CU-08 | Casos de prueba originales CP-049 a CP-053 |
+| `../../docs/CASOS_PRUEBA` | Fila CU-08 | Trazabilidad CU-08 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service detalle |
 | `../../DIAGRAMAS_SECUENCIAS/SEC008_consulta_saldo.md` | Diagrama completo | Consulta de saldo |

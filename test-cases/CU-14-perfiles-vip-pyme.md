@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-14 | **SEC:** SEC012_perfiles_vip_pyme.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`  
+**Fuente:** `../../docs/CASOS_PRUEBA`  
 **Nota:** accounts-service actúa como **validador** al abrir cuentas VIP/PYME. Valida `customer_profile_view` + `customer_card_view` antes de permitir la apertura.
 
 ---
@@ -43,7 +43,7 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-14 | Casos de prueba originales CP-126 a CP-137 (CP-131 a CP-133 aplican a accounts-service) |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-14 | Trazabilidad CU-14 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service como validador VIP/PYME |
+| `../../docs/CASOS_PRUEBA` | CU-14 | Casos de prueba originales CP-126 a CP-137 (CP-131 a CP-133 aplican a accounts-service) |
+| `../../docs/CASOS_PRUEBA` | Fila CU-14 | Trazabilidad CU-14 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service como validador VIP/PYME |
 | `../../DIAGRAMAS_SECUENCIAS/SEC012_perfiles_vip_pyme.md` | Diagrama completo | Perfiles VIP/PYME |

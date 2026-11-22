@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-05 | **SEC:** SEC005_deposito_cuenta.md, SEC006_retiro_cuenta.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`
+**Fuente:** `../../docs/CASOS_PRUEBA`
 
 ---
 
@@ -106,8 +106,8 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-05 | Casos de prueba originales CP-037 a CP-048 |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-05 | Trazabilidad CU-05 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service detalle |
+| `../../docs/CASOS_PRUEBA` | CU-05 | Casos de prueba originales CP-037 a CP-048 |
+| `../../docs/CASOS_PRUEBA` | Fila CU-05 | Trazabilidad CU-05 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service detalle |
 | `../../DIAGRAMAS_SECUENCIAS/SEC005_deposito_cuenta.md` | Diagrama completo | Depósito en cuenta |
 | `../../DIAGRAMAS_SECUENCIAS/SEC006_retiro_cuenta.md` | Diagrama completo | Retiro de cuenta |

@@ -97,17 +97,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
-/**
- * Global exception handler for the accounts-service.
- * 
- * <p>Intercepts exceptions thrown by REST controllers and maps them to
- * standardized HTTP error responses following the Yanki platform conventions.</p>
- *
- * <p>Provides unified error response structure including error codes and messages.</p>
- *
- * @author Sebastián Retamal
- * @contact semorale@emeal.nttdata.com
- */
+    /**
+     * Mapea un código de error de negocio a su código de estado HTTP correspondiente.
+     *
+     * <p>Los errores de regla de negocio (conflictos, límites, deudas) retornan 409 CONFLICT.
+     * Los errores de validación de entrada (tipo de cuenta inválido, campos faltantes) retornan 422 UNPROCESSABLE_ENTITY.
+     * Los errores de recurso no encontrado retornan 404 NOT_FOUND.
+     * Cualquier otro código desconocido retorna 500 INTERNAL_SERVER_ERROR.</p>
+     *
+     * @param code Código de error definido en {@link ErrorCodes}
+     * @return Estado HTTP correspondiente al código de error
+     */
     private HttpStatus mapErrorCodeToStatus(String code) {
         return switch (code) {
             case ErrorCodes.ACCOUNT_NOT_FOUND,
@@ -131,9 +131,9 @@ public class GlobalExceptionHandler {
                  ErrorCodes.ACCOUNT_BLOCKED_RISK,
                  ErrorCodes.TRANSFER_SAME_ACCOUNT,
                  ErrorCodes.CUSTOMER_INACTIVE,
-                 ErrorCodes.INVALID_ACCOUNT_TYPE,
                  ErrorCodes.DEBIT_PAYMENT_REJECTED -> HttpStatus.CONFLICT;
-            case ErrorCodes.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
+            case ErrorCodes.INVALID_ACCOUNT_TYPE,
+                 ErrorCodes.VALIDATION_ERROR -> HttpStatus.UNPROCESSABLE_ENTITY;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
     }

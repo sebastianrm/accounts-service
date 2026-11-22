@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-02 | **SEC:** SEC002_apertura_cuenta_ahorro.md, SEC003_apertura_cuenta_corriente.md, SEC004_apertura_cuenta_plazo_fijo.md, SEC007_cierre_cuenta.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`
+**Fuente:** `../../docs/CASOS_PRUEBA`
 
 ---
 
@@ -161,9 +161,9 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-02 | Casos de prueba originales CP-020 a CP-036 |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-02 | Trazabilidad CU-02 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service detalle |
+| `../../docs/CASOS_PRUEBA` | CU-02 | Casos de prueba originales CP-020 a CP-036 |
+| `../../docs/CASOS_PRUEBA` | Fila CU-02 | Trazabilidad CU-02 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service detalle |
 | `../../DIAGRAMAS_SECUENCIAS/SEC002_apertura_cuenta_ahorro.md` | Diagrama completo | Apertura cuenta ahorro |
 | `../../DIAGRAMAS_SECUENCIAS/SEC003_apertura_cuenta_corriente.md` | Diagrama completo | Apertura cuenta corriente |
 | `../../DIAGRAMAS_SECUENCIAS/SEC004_apertura_cuenta_plazo_fijo.md` | Diagrama completo | Apertura cuenta plazo fijo |

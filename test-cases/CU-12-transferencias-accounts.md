@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-12 | **SEC:** SEC010_transferencias.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`  
+**Fuente:** `../../docs/CASOS_PRUEBA`  
 **Nota:** accounts-service actúa como **consumer/liquidador** de transferencias. Consume `transfer.requested.v1` de Kafka, liquida en MongoDB (debita origen, acredita destino) y publica `transfer.settled.v1`.
 
 ---
@@ -34,7 +34,7 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-12 | Casos de prueba originales CP-058 a CP-074 (CP-067 a CP-069 son los que aplican a accounts-service como liquidador) |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-12 | Trazabilidad CU-12 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service como consumer de transfer.requested |
+| `../../docs/CASOS_PRUEBA` | CU-12 | Casos de prueba originales CP-058 a CP-074 (CP-067 a CP-069 son los que aplican a accounts-service como liquidador) |
+| `../../docs/CASOS_PRUEBA` | Fila CU-12 | Trazabilidad CU-12 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service como consumer de transfer.requested |
 | `../../DIAGRAMAS_SECUENCIAS/SEC010_transferencias.md` | Diagrama completo | Transferencias event-driven |

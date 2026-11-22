@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-09 | **SEC:** SEC009_consulta_movimientos.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`
+**Fuente:** `../../docs/CASOS_PRUEBA`
 
 ---
 
@@ -49,7 +49,7 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-09 | Casos de prueba originales CP-054 a CP-057 |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-09 | Trazabilidad CU-09 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service detalle |
+| `../../docs/CASOS_PRUEBA` | CU-09 | Casos de prueba originales CP-054 a CP-057 |
+| `../../docs/CASOS_PRUEBA` | Fila CU-09 | Trazabilidad CU-09 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service detalle |
 | `../../DIAGRAMAS_SECUENCIAS/SEC009_consulta_movimientos.md` | Diagrama completo | Consulta de movimientos |

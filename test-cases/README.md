@@ -1,7 +1,7 @@
 # Test Cases — accounts-service
 
 **Microservicio:** accounts-service (puerto 8083)  
-**Fuente:** `CASOS_PRUEBA/CASOS_PRUEBA_QA.md`  
+**Fuente:** `../../docs/CASOS_PRUEBA`  
 **Última actualización:** 2026-11-14
 
 ## Descripción
@@ -46,9 +46,9 @@ Este directorio contiene los casos de prueba específicos para el microservicio 
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-02 a CU-15 | Fuente original de todos los casos de prueba |
-| `../../CASOS_PRUEBA/RTM.md` | Fila accounts-service | Matriz de trazabilidad completa |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | Trazabilidad detallada por servicio |
+| `../../docs/CASOS_PRUEBA` | CU-02 a CU-15 | Fuente original de todos los casos de prueba |
+| `../../docs/CASOS_PRUEBA` | Fila accounts-service | Matriz de trazabilidad completa |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | Trazabilidad detallada por servicio |
 | `../../DIAGRAMAS_SECUENCIAS/` | SEC002-SEC013, SEC027-SEC028 | Diagramas de secuencia relacionados |
 
 ## Criterios Generales de Prueba

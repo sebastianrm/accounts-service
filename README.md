@@ -657,15 +657,15 @@ src/test/java/com/yanki/accounts
 
 | Archivo | Descripción |
 |---------|-------------|
-| `../CASOS_USO/CU-02-Gestion-Cuentas.md` | Caso de uso principal con reglas de negocio |
-| `../CASOS_USO/CU-05-Operaciones-Cuentas.md` | Depósitos y retiros |
-| `../CASOS_USO/CU-14-Perfiles-VIP-PYME.md` | Perfiles VIP y PYME |
-| `../CASOS_USO/CU-15-Comisiones.md` | Comisiones y jobs |
+| `../docs/CASOS_USO` | Caso de uso principal con reglas de negocio |
+| `../docs/CASOS_USO` | Depósitos y retiros |
+| `../docs/CASOS_USO` | Perfiles VIP y PYME |
+| `../docs/CASOS_USO` | Comisiones y jobs |
 | `../DIAGRAMAS_SECUENCIAS/SEC002_apertura_cuenta_ahorro.md` | Diagrama apertura ahorro |
 | `../DIAGRAMAS_SECUENCIAS/SEC005_deposito_cuenta.md` | Diagrama depósito |
 | `../DIAGRAMAS_SECUENCIAS/SEC033_pago_debito_bidireccional.md` | Diagrama pago débito |
-| `../CASOS_PRUEBA/RTM.md` | Matriz de trazabilidad completa |
-| `../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Trazabilidad por microservicio |
+| `../docs/CASOS_PRUEBA` | Matriz de trazabilidad completa |
+| `../docs/CASOS_PRUEBA` | Trazabilidad por microservicio |
 | `../system-prompt-auditoria-hexagonal-yanki.md` | Estándar de arquitectura hexagonal |
 
 ---

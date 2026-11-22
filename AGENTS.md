@@ -238,6 +238,6 @@ The service fully complies with the hexagonal architecture standard defined in `
 - `README.md` — Full API docs, hexagonal audit, business rules, data model.
 - `../AGENTS.md` — Root-level traceability golden rule.
 - `../CONVENTIONS.md` — Global technical contract for all microservices.
-- `../CASOS_USO/CU-02-Gestion-Cuentas.md` — Main use case with business rules.
+- `../docs/CASOS_USO` — Main use case with business rules.
 - `../system-prompt-auditoria-hexagonal-yanki.md` — Hexagonal architecture standard.
-- `../CASOS_PRUEBA/RTM.md` — Traceability matrix (CU ↔ SEC ↔ CP).
+- `../docs/CASOS_PRUEBA` — Traceability matrix (CU ↔ SEC ↔ CP).

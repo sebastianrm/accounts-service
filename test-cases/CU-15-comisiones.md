@@ -2,7 +2,7 @@
 
 **Microservicio:** accounts-service  
 **CU:** CU-15 | **SEC:** SEC013_comisiones.md, SEC005_deposito_cuenta.md, SEC006_retiro_cuenta.md  
-**Fuente:** `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md`
+**Fuente:** `../../docs/CASOS_PRUEBA`
 
 ---
 
@@ -74,7 +74,7 @@
 
 | Archivo | Sección | Descripción |
 |---|---|---|
-| `../../CASOS_PRUEBA/CASOS_PRUEBA_QA.md` | CU-15 | Casos de prueba originales CP-138 a CP-144 |
-| `../../CASOS_PRUEBA/RTM.md` | Fila CU-15 | Trazabilidad CU-15 |
-| `../../CASOS_PRUEBA/TRACEABILIDAD_POR_SERVICIO.md` | Sección 2 | accounts-service como owner de comisiones |
+| `../../docs/CASOS_PRUEBA` | CU-15 | Casos de prueba originales CP-138 a CP-144 |
+| `../../docs/CASOS_PRUEBA` | Fila CU-15 | Trazabilidad CU-15 |
+| `../../docs/CASOS_PRUEBA` | Sección 2 | accounts-service como owner de comisiones |
 | `../../DIAGRAMAS_SECUENCIAS/SEC013_comisiones.md` | Diagrama completo | Comisiones y jobs |
