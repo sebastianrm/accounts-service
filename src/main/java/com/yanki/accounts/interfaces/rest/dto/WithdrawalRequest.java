@@ -1,6 +1,7 @@
 package com.yanki.accounts.interfaces.rest.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,6 +30,7 @@ public class WithdrawalRequest {
 
     @NotNull(message = "Importe es obligatorio")
     @DecimalMin(value = "0.01", message = "Importe debe ser mayor a 0")
+    @DecimalMax(value = "500000.00", message = "Importe excede el límite permitido de S/ 500,000.00")
     @Schema(description = "Monto a retirar. Debe ser mayor a 0.", example = "200.00", requiredMode = Schema.RequiredMode.REQUIRED)
     private BigDecimal amount;
 

@@ -4,6 +4,7 @@ import com.yanki.accounts.domain.model.Account;
 import com.yanki.accounts.domain.model.AccountStatus;
 import com.yanki.accounts.domain.model.AccountType;
 import com.yanki.accounts.domain.port.out.AccountPersistencePort;
+import com.yanki.accounts.infrastructure.persistence.document.AccountDocument;
 import com.yanki.accounts.infrastructure.persistence.mapper.AccountDocumentMapper;
 import com.yanki.accounts.infrastructure.persistence.repository.SpringDataAccountRepository;
 import io.reactivex.rxjava3.core.Flowable;
@@ -12,6 +13,7 @@ import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -42,9 +44,21 @@ public class AccountMongoAdapter implements AccountPersistencePort {
     @Override
     public Single<Account> save(Account account) {
         log.debug("[MongoDB] Guardando cuenta: id={}, type={}, balance={}", account.getId(), account.getType(), account.getBalance());
+        AccountDocument document = AccountDocumentMapper.toDocument(account);
+        Mono<AccountDocument> saveMono;
+        if (account.getId() != null && !account.getId().isEmpty()) {
+            saveMono = repository.findById(account.getId())
+                    .switchIfEmpty(Mono.just(document))
+                    .map(existing -> {
+                        document.setVersion(existing.getVersion());
+                        return document;
+                    })
+                    .flatMap(repository::save);
+        } else {
+            saveMono = repository.save(document);
+        }
         return Single.fromPublisher(
-                repository.save(AccountDocumentMapper.toDocument(account))
-                        .map(AccountDocumentMapper::toDomain)
+                saveMono.map(AccountDocumentMapper::toDomain)
         ).doOnSuccess(saved -> log.debug("[MongoDB] Cuenta guardada: id={}", saved.getId()))
          .doOnError(throwable -> log.error("[MongoDB] Error guardando cuenta: id={} - {}", account.getId(), throwable.getMessage()));
     }

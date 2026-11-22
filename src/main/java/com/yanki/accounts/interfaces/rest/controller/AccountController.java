@@ -257,7 +257,7 @@ public class AccountController {
         try {
             return Mono.fromFuture(() -> singleToCompletableFuture(accountService.getBalance(id)))
                     .map(balanceResult -> {
-                        log.debug("[REST] Saldo consultado: accountId={}, balance={}, cached={}", id, balanceResult.getBalance(), balanceResult.isCached());
+                        log.debug("[REST] Saldo consultado: accountId={}, cached={}", id, balanceResult.isCached());
                         return BalanceResponse.builder()
                                 .accountId(id)
                                 .balance(balanceResult.getBalance())

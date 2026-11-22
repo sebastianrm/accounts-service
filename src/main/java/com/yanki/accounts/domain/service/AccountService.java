@@ -455,11 +455,8 @@ public class AccountService implements
                                 .andThen(Completable.fromAction(() -> {
                                     cachePort.invalidateBalance(accountId);
                                     log.info("Cuenta cerrada exitosamente: {}", accountId);
-                                }));
-                    })
-                    .doOnComplete(() -> {
-                        log.debug("Publicando evento de cuenta cerrada: {}", accountId);
-                        publishAccountClosedEvent(accountId).subscribe();
+                                }))
+                                .andThen(publishAccountClosedEvent(accountId));
                     })
                     .doOnError(throwable -> log.error("Error al cerrar cuenta: {} - {}", accountId, throwable.getMessage()))
                     .subscribeOn(Schedulers.io());
@@ -773,7 +770,8 @@ public class AccountService implements
                                 command.getReferenceId(),
                                 BigDecimal.ZERO
                         );
-                        movementPersistencePort.save(openingMovement).subscribe();
+                        return movementPersistencePort.save(openingMovement)
+                                .map(m -> toAccountResult(saved));
                     }
                     return Single.just(toAccountResult(saved));
                 });
@@ -930,7 +928,7 @@ public class AccountService implements
                                     cachePort.invalidateBalance(accountId);
                                     log.debug("Movimiento guardado: movementId={}, accountId={}, type={}, amount={}, balanceAfter={}",
                                             m.getId(), accountId, type, amount, newBalance);
-                                    publishMovementEvent(
+                                    return publishMovementEvent(
                                             buildMovementEvent(
                                                     movement,
                                                     accountId,
@@ -939,8 +937,7 @@ public class AccountService implements
                                                     amount,
                                                     appliedCommission
                                             )
-                                    ).subscribe();
-                                    return Single.just(m);
+                                    ).andThen(Single.just(m));
                                 })
                                 .map(m -> toMovementResult(m, newBalance));
                     } catch (BusinessException e) {
@@ -1043,6 +1040,7 @@ public class AccountService implements
             BigDecimal commission
     ) {
         return Movement.builder()
+                .id(UUID.randomUUID().toString())
                 .accountId(accountId)
                 .customerId(customerId)
                 .type(type)

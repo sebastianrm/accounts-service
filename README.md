@@ -34,7 +34,74 @@ Gestiona los productos de ahorro, corriente y plazo fijo, incluyendo movimientos
 
 ---
 
-## 0. Auditoría de Arquitectura Hexagonal
+## 0. Auditoría de Seguridad y Código
+
+> **Fecha:** 2026-11-21 | **Estado:** ⚠️ 4 CRÍTICOS, 5 ALTO, 4 MEDIO, 3 BAJO
+>
+> Consulte [`AUDIT_REPORT.md`](./AUDIT_REPORT.md) para el reporte completo con hallazgos, fragmentos de código y propuestas de corrección.
+
+### Diagrama de Arquitectura
+
+```mermaid
+flowchart TD
+    subgraph Gateway["API Gateway (puerto 8080)"]
+        GW[Route: /api/accounts/**]
+    end
+
+    subgraph Accounts["accounts-service (puerto 8083)"]
+        subgraph Interfaces["Interfaces (Adaptadores de entrada)"]
+            CTRL[AccountController<br/>11 endpoints REST]
+        end
+
+        subgraph Domain["Domain (Hexágono puro)"]
+            subgraph Ports["Puertos"]
+                IN[Input Ports<br/>6 Use Cases]
+                OUT[Output Ports<br/>8 Puertos]
+            end
+            SVC[AccountService<br/>RxJava 3]
+            SCHED[AccountSchedulerService<br/>3 Jobs programados]
+        end
+
+        subgraph Infrastructure["Infrastructure (Adaptadores de salida)"]
+            MONGO[MongoDB Adapter<br/>Spring Data Reactive]
+            REDIS[Redis Cache Adapter<br/>ReactiveStringRedisTemplate]
+            KAFKA_PUB[Kafka Event Adapter<br/>KafkaTemplate]
+            KAFKA_CONS[Kafka Consumer<br/>8 @KafkaListener]
+        end
+    end
+
+    subgraph Databases["Bases de Datos"]
+        MDB[(MongoDB<br/>yanki_accounts)]
+        RDB[(Redis<br/>saldos + contadores)]
+    end
+
+    subgraph Kafka["Apache Kafka"]
+        TOPICS[Topics In/Out<br/>16 topics]
+    end
+
+    GW --> CTRL
+    CTRL --> IN
+    IN --> SVC
+    SVC --> OUT
+    OUT --> MONGO
+    OUT --> REDIS
+    OUT --> KAFKA_PUB
+    SCHED --> OUT
+    KAFKA_CONS --> IN
+    MONGO --> MDB
+    REDIS --> RDB
+    KAFKA_PUB --> TOPICS
+    TOPICS --> KAFKA_CONS
+
+    style Domain fill:#e8f5e9,stroke:#2e7d32
+    style Interfaces fill:#e3f2fd,stroke:#1565c0
+    style Infrastructure fill:#fff3e0,stroke:#ef6c00
+    style Databases fill:#fce4ec,stroke:#c62828
+```
+
+---
+
+## 1. Auditoría de Arquitectura Hexagonal
 
 > **Fecha:** 2026-11-14 | **Estado:** ✅ Sin violaciones | **Última verificación:** 2026-11-14
 

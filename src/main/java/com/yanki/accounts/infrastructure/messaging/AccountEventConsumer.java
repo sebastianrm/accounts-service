@@ -54,8 +54,8 @@ public class AccountEventConsumer {
     public void onCustomerRegistered(CustomerRegisteredEvent event) {
         log.info("[KAFKA-CONSUMER] Evento recibido: customer.registered.v1 - clase: {}", event != null ? event.getClass().getName() : "null");
         if (event != null) {
-            log.debug("[KAFKA-CONSUMER] CustomerRegisteredEvent campos recibidos -> customerId={}, username={}, email={}, customerType={}, documentType={}, documentNumber={}, occurredAt={}",
-                    event.getCustomerId(), event.getUsername(), event.getEmail(), event.getCustomerType(), event.getDocumentType(), event.getDocumentNumber(), event.getOccurredAt());
+            log.debug("[KAFKA-CONSUMER] CustomerRegisteredEvent campos recibidos -> customerId={}, username={}, email={}, customerType={}, documentType={}, documentNumber=[MASKED], occurredAt={}",
+                    event.getCustomerId(), event.getUsername(), event.getEmail(), event.getCustomerType(), event.getDocumentType(), "[MASKED]", event.getOccurredAt());
         }
         log.info("[KAFKA] Evento recibido: customer.registered.v1 - customerId={}", event.getCustomerId());
         try {
@@ -252,21 +252,25 @@ public class AccountEventConsumer {
 
     private void processIfNew(String key, java.util.function.Supplier<Completable> action) {
         try {
-            idempotencyPort.checkAndMarkProcessed(key)
-                    .subscribe(processed -> {
-                        if (processed) {
-                            log.debug("[KAFKA] Evento duplicado detectado, descartando: {}", key);
-                        } else {
-                            log.debug("[KAFKA] Procesando nuevo evento: {}", key);
-                            action.get().subscribe(
-                                    () -> log.info("[KAFKA] Evento procesado exitosamente: {}", key),
-                                    error -> log.error("[KAFKA] Error procesando evento: {} - {}", key, error.getMessage(), error)
-                            );
-                        }
-                    }, error -> log.error("[KAFKA] Error verificando idempotencia: {} - {}",
-                            key, error.getMessage(), error));
+            boolean processed = idempotencyPort.checkAndMarkProcessed(key)
+                    .toFuture()
+                    .get(10, java.util.concurrent.TimeUnit.SECONDS);
+
+            if (processed) {
+                log.debug("[KAFKA] Evento duplicado detectado, descartando: {}", key);
+            } else {
+                action.get().toFuture().get(30, java.util.concurrent.TimeUnit.SECONDS);
+                log.info("[KAFKA] Evento procesado exitosamente: {}", key);
+            }
+        } catch (java.util.concurrent.TimeoutException e) {
+            log.error("[KAFKA] Timeout procesando evento: {}", key, e);
+            throw new RuntimeException("Timeout procesando evento Kafka: " + key, e);
+        } catch (java.util.concurrent.ExecutionException e) {
+            log.error("[KAFKA] Error procesando evento: {} - {}", key, e.getCause() != null ? e.getCause().getMessage() : e.getMessage(), e);
+            throw new RuntimeException("Error procesando evento Kafka: " + key, e.getCause());
         } catch (Exception e) {
-            log.error("[KAFKA] Error inesperado en processIfNew: {} - {}", key, e.getMessage(), e);
+            log.error("[KAFKA] Error procesando evento: {} - {}", key, e.getMessage(), e);
+            throw new RuntimeException("Error procesando evento Kafka: " + key, e);
         }
     }
 

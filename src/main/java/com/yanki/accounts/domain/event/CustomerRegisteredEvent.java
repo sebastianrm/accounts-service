@@ -33,9 +33,6 @@ public class CustomerRegisteredEvent {
     /** Email del cliente. */
     private String email;
 
-    /** Contraseña temporal. */
-    private String temporaryPassword;
-
     /** Roles asignados. */
     private List<String> roles;
 

@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -27,6 +30,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "accounts")
+@CompoundIndex(name = "idx_customerId_type", def = "{'customerId': 1, 'type': 1}")
+@CompoundIndex(name = "idx_customerId_status", def = "{'customerId': 1, 'status': 1}")
 public class AccountDocument {
 
     /** Identificador unico de la cuenta y ID de la coleccion MongoDB. */
@@ -34,16 +39,24 @@ public class AccountDocument {
     private String id;
 
     /** Identificador del cliente propietario. */
+    @Indexed
     private String customerId;
 
     /** Número de cuenta generado (formato: ACC + 16 chars). */
+    @Indexed(unique = true)
     private String accountNumber;
 
     /** Tipo de producto: SAVINGS, CURRENT, TERM_FIXED. */
+    @Indexed
     private String type;
 
     /** Estado de la cuenta: OPEN, CLOSED, BLOCKED. */
+    @Indexed
     private String status;
+
+    /** Versión para control de concurrencia optimista. */
+    @Version
+    private Long version;
 
     /** Moneda de la cuenta (PEN, USD). */
     private String currency;

@@ -105,6 +105,13 @@ local.properties
 # Log file
 *.log
 
+# Keep logs directory in repository
+!logs/
+!logs/.gitkeep
+/logs/
+/logs/**
+!/logs/.gitkeep
+
 # BlueJ files
 *.ctxt
 
