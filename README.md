@@ -678,3 +678,4 @@ src/test/java/com/yanki/accounts
 - `docs/EVENTOS.md` - Catálogo completo de topics y payloads
 - `docker-compose.full.yml` - Infraestructura completa
 - `init-mongo-parte1.js` - Datos de prueba iniciales
+- `api/accounts-service.yaml` - Contrato OpenAPI 3.0 completo con schemas, endpoints y errores

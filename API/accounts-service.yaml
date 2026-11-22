@@ -1,0 +1,1132 @@
+openapi: 3.0.3
+info:
+  title: Yanki Accounts Service API
+  description: |
+    API REST para gestión de cuentas bancarias pasivas de la plataforma Yanki.
+    
+    Soporta tres tipos de cuentas: ahorro (SAVINGS), corriente (CURRENT) y plazo fijo (TERM_FIXED).
+    
+    **Características principales:**
+    - Apertura de cuentas con validación de reglas de negocio por tipo de cliente
+    - Consulta de saldo con caché Redis para alto rendimiento
+    - Depósitos y retiros con control de comisiones y límites
+    - Movimientos paginados con filtros por fecha y tipo
+    - Validación inter-servicio para transferencias
+    - Jobs administrativos para comisiones y verificación VIP
+    - Cierre de cuentas con validación de saldo cero
+  version: 1.0.0
+  contact:
+    name: Sebastian Retamal Morales
+    email: retamal.sebastian@gmail.com
+  license:
+    name: Proprietary
+    url: https://yanki.com/license
+
+servers:
+  - url: http://localhost:8083
+    description: Entorno local de desarrollo
+  - url: https://api-gateway.yanki.com/api/accounts
+    description: Entorno de producción (vía API Gateway)
+
+tags:
+  - name: Accounts
+    description: Gestión de cuentas bancarias: ahorro, corriente, plazo fijo
+
+paths:
+  /api/accounts:
+    post:
+      tags:
+        - Accounts
+      summary: Abre una nueva cuenta bancaria
+      description: |
+        Crea una nueva cuenta bancaria (ahorro, corriente o plazo fijo) para un cliente existente.
+        
+        **Reglas de negocio:**
+        - SAVINGS: solo para clientes PERSONAL, máximo una cuenta de ahorro por cliente
+        - CURRENT: disponible para PERSONAL y ENTERPRISE
+        - TERM_FIXED: requiere termDays y allowedMovementDay obligatorios
+        - El cliente no debe tener deuda vencida
+        - Se valida que no exista ya una cuenta del mismo tipo (para SAVINGS)
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+            examples:
+              cuentaAhorro:
+                summary: Apertura de cuenta SAVINGS para cliente PERSONAL
+                value:
+                  customerId: "CUST001"
+                  accountType: "SAVINGS"
+                  currency: "PEN"
+                  initialAmount: 500.00
+                  channel: "WEB"
+              plazoFijo:
+                summary: Apertura de cuenta TERM_FIXED con plazo de 90 días
+                value:
+                  customerId: "CUST001"
+                  accountType: "TERM_FIXED"
+                  currency: "USD"
+                  initialAmount: 10000.00
+                  termDays: 90
+                  allowedMovementDay: 15
+                  channel: "BRANCH"
+      responses:
+        '201':
+          description: Cuenta creada exitosamente. Se genera un número de cuenta único y se publica el evento account.opened.v1
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+              example:
+                accountId: "ACC001"
+                accountNumber: "ACC123456789"
+                accountType: "SAVINGS"
+                status: "OPEN"
+                balance: 500.00
+                currency: "PEN"
+                openedAt: "2026-01-15T10:30:00"
+                customerId: "CUST001"
+        '400':
+          description: Datos de solicitud inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Regla de negocio violada (cliente con deuda vencida, cuenta ya existente, tipo no permitido)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    get:
+      tags:
+        - Accounts
+      summary: Lista cuentas con filtros y paginación
+      description: |
+        Retorna una lista paginada de cuentas bancarias aplicando los filtros proporcionados.
+        Los filtros se combinan mediante el patrón Strategy y soportan cualquier combinación.
+      operationId: findAllAccounts
+      parameters:
+        - name: customerId
+          in: query
+          required: false
+          description: Filtrar por identificador del cliente propietario
+          schema:
+            type: string
+            example: "CUST001"
+        - name: type
+          in: query
+          required: false
+          description: Filtrar por tipo de cuenta
+          schema:
+            type: string
+            enum: [SAVINGS, CURRENT, TERM_FIXED]
+            example: "SAVINGS"
+        - name: status
+          in: query
+          required: false
+          description: Filtrar por estado de la cuenta
+          schema:
+            type: string
+            enum: [OPEN, CLOSED, BLOCKED]
+            example: "OPEN"
+        - name: page
+          in: query
+          required: false
+          description: Número de página (base 0)
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          required: false
+          description: Tamaño de página (máximo 100)
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Lista de cuentas encontradas con metadatos de paginación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResponse_AccountResponse'
+
+  /api/accounts/{id}:
+    get:
+      tags:
+        - Accounts
+      summary: Obtiene una cuenta por ID
+      description: Retorna la información completa de una cuenta bancaria identificada por su ID único
+      operationId: getAccountById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+      responses:
+        '200':
+          description: Cuenta encontrada con todos sus detalles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      tags:
+        - Accounts
+      summary: Cierra una cuenta (saldo debe ser 0)
+      description: |
+        Cierra una cuenta bancaria activa. El saldo debe ser exactamente 0 para poder cerrar la cuenta.
+        Al cerrar, el estado cambia a CLOSED, se registra la fecha de cierre y se publica el evento account.closed.v1
+      operationId: closeAccount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta a cerrar
+          schema:
+            type: string
+            example: "ACC001"
+      responses:
+        '204':
+          description: Cuenta cerrada exitosamente. El estado cambia a CLOSED
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: El saldo de la cuenta no es 0. Realice operaciones para vaciar el saldo antes de cerrar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/{id}/balance:
+    get:
+      tags:
+        - Accounts
+      summary: Consulta el saldo disponible de una cuenta
+      description: |
+        Retorna el saldo actual de una cuenta bancaria. El valor se obtiene desde caché Redis
+        si está disponible, o directamente desde MongoDB si no. El campo 'cached' indica la fuente
+      operationId: getBalance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+      responses:
+        '200':
+          description: Saldo consultado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+              example:
+                accountId: "ACC001"
+                balance: 1000.00
+                currency: "PEN"
+                cached: false
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/{id}/validate-transfer:
+    get:
+      tags:
+        - Accounts
+      summary: Valida una cuenta para transferencias inter-servicio
+      description: |
+        Endpoint utilizado por transfers-service para validar que una cuenta existe,
+        está operativa (OPEN) y cumple los requisitos antes de iniciar una transferencia
+      operationId: validateForTransfer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+      responses:
+        '200':
+          description: Cuenta validada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountValidationResponse'
+              example:
+                valid: true
+                accountId: "ACC001"
+                customerId: "CUST001"
+                status: "OPEN"
+                balance: 3000.00
+                productType: "SAVINGS"
+                maxFreeMovements: 5
+                commissionPerExcessMovement: 2.50
+                hasOverdueDebt: false
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/{id}/movements:
+    get:
+      tags:
+        - Accounts
+      summary: Lista movimientos de una cuenta con paginación y filtros
+      description: |
+        Retorna una lista paginada de movimientos bancarios de una cuenta específica.
+        Soporta filtros por rango de fechas y tipo de movimiento
+      operationId: getMovements
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+        - name: from
+          in: query
+          required: false
+          description: Fecha de inicio del filtro (inclusive). Formato ISO 8601
+          schema:
+            type: string
+            format: date-time
+            example: "2026-01-01T00:00:00"
+        - name: to
+          in: query
+          required: false
+          description: Fecha de fin del filtro (inclusive). Formato ISO 8601
+          schema:
+            type: string
+            format: date-time
+            example: "2026-11-14T23:59:59"
+        - name: type
+          in: query
+          required: false
+          description: Filtrar por tipo de movimiento
+          schema:
+            type: string
+            enum: [DEPOSIT, WITHDRAWAL, TRANSFER_IN, TRANSFER_OUT, COMMISSION, PAYMENT, INTEREST]
+            example: "DEPOSIT"
+        - name: page
+          in: query
+          required: false
+          description: Número de página (base 0)
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          required: false
+          description: Tamaño de página (máximo 100)
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Lista de movimientos encontrados con metadatos de paginación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResponse_MovementResponse'
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/{id}/deposits:
+    post:
+      tags:
+        - Accounts
+      summary: Realiza un depósito en la cuenta
+      description: |
+        Acredita un monto a la cuenta especificada. El depósito incrementa el saldo disponible
+        inmediatamente y genera un movimiento de tipo DEPOSIT. Se publica el evento account.deposited.v1
+      operationId: deposit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositRequest'
+            example:
+              amount: 500.00
+              description: "Depósito de sueldo"
+              channel: "WEB"
+              referenceId: "REF001"
+      responses:
+        '201':
+          description: Depósito realizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementResponse'
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: La cuenta está bloqueada o cerrada y no puede recibir depósitos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/{id}/withdrawals:
+    post:
+      tags:
+        - Accounts
+      summary: Realiza un retiro de la cuenta
+      description: |
+        Debita un monto de la cuenta especificada. Valida saldo suficiente, límites diarios/mensuales,
+        reglas de movimientos excedentes y comisiones aplicables. Se publica el evento account.withdrawn.v1
+      operationId: withdrawal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequest'
+            example:
+              amount: 200.00
+              description: "Retiro en cajero"
+              channel: "ATM"
+              referenceId: "REF002"
+      responses:
+        '201':
+          description: Retiro realizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementResponse'
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Saldo insuficiente, límites excedidos, cuenta bloqueada o reglas de negocio violadas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/{id}/movement-count:
+    get:
+      tags:
+        - Accounts
+      summary: Obtiene el contador de movimientos del mes actual
+      description: Retorna la cantidad de movimientos realizados en la cuenta durante el mes en curso
+      operationId: getMovementCount
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador único de la cuenta
+          schema:
+            type: string
+            example: "ACC001"
+      responses:
+        '200':
+          description: Contador de movimientos del mes actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementCountResponse'
+              example:
+                accountId: "ACC001"
+                movementCount: 5
+                month: "2026-11"
+        '404':
+          description: No se encontró una cuenta con el ID proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/jobs/maintenance-commission:
+    post:
+      tags:
+        - Accounts
+      summary: Ejecuta manualmente el job de comisiones de mantenimiento
+      description: |
+        Dispara la ejecución inmediata del job que aplica las comisiones de mantenimiento
+        mensual a todas las cuentas corriente con maintenanceCommission > 0
+      operationId: triggerMaintenanceCommission
+      responses:
+        '204':
+          description: Job de comisiones de mantenimiento ejecutado exitosamente
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/accounts/jobs/vip-average-check:
+    post:
+      tags:
+        - Accounts
+      summary: Ejecuta manualmente el job de verificación de promedio VIP
+      description: |
+        Dispara la ejecución inmediata del job que verifica el promedio diario del mes anterior
+        para cuentas VIP. Si el promedio está por debajo del mínimo, aplica la penalidad correspondiente
+      operationId: triggerVipAverageCheck
+      responses:
+        '204':
+          description: Job de verificación de promedio VIP ejecutado exitosamente
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+components:
+  schemas:
+    AccountRequest:
+      type: object
+      required:
+        - customerId
+        - accountType
+        - currency
+        - initialAmount
+      description: |
+        Solicitud para abrir una nueva cuenta bancaria.
+        
+        **Reglas de validación:**
+        - customerId, accountType, currency y initialAmount son obligatorios
+        - initialAmount debe ser >= 0
+        - termDays y allowedMovementDay son obligatorios cuando accountType es TERM_FIXED
+        - holders y signers son opcionales, solo para cuentas empresariales (CURRENT + ENTERPRISE)
+        - holders: máximo 10 titulares
+        - signers: máximo 20 firmantes
+      properties:
+        customerId:
+          type: string
+          description: Identificador único del cliente propietario de la cuenta
+          example: "CUST001"
+        accountType:
+          type: string
+          description: |
+            Tipo de cuenta a abrir.
+            - SAVINGS: solo para clientes PERSONAL, máximo una por cliente
+            - CURRENT: disponible para PERSONAL y ENTERPRISE
+            - TERM_FIXED: requiere termDays y allowedMovementDay obligatorios
+          enum: [SAVINGS, CURRENT, TERM_FIXED]
+          example: "SAVINGS"
+        currency:
+          type: string
+          description: |
+            Moneda de la cuenta.
+            - PEN: Soles Peruanos
+            - USD: Dólares Americanos
+          enum: [PEN, USD]
+          example: "PEN"
+        initialAmount:
+          type: number
+          format: decimal
+          description: Monto inicial con el que se abre la cuenta. Debe ser mayor o igual a 0
+          example: 500.00
+          minimum: 0
+        termDays:
+          type: integer
+          description: Plazo en días para cuentas a plazo fijo (TERM_FIXED). Obligatorio si el tipo es TERM_FIXED
+          example: 90
+          nullable: true
+        allowedMovementDay:
+          type: integer
+          description: Día del mes permitido para movimientos en cuentas a plazo fijo (1-28). Obligatorio si el tipo es TERM_FIXED
+          example: 15
+          minimum: 1
+          maximum: 28
+          nullable: true
+        holders:
+          type: array
+          description: Lista de titulares para cuentas empresariales (CURRENT de tipo ENTERPRISE). Máximo 10 titulares
+          items:
+            $ref: '#/components/schemas/AccountHolderRequest'
+          maxItems: 10
+          nullable: true
+        signers:
+          type: array
+          description: Lista de firmantes autorizados para cuentas empresariales. Máximo 20 firmantes
+          items:
+            $ref: '#/components/schemas/AccountSignerRequest'
+          maxItems: 20
+          nullable: true
+        channel:
+          type: string
+          description: |
+            Canal desde donde se realiza la apertura.
+            - BRANCH: sucursal física
+            - MOBILE: aplicación móvil
+            - WEB: banca en línea
+          enum: [BRANCH, MOBILE, WEB]
+          example: "WEB"
+
+    AccountHolderRequest:
+      type: object
+      description: Titular de cuenta empresarial con porcentaje de propiedad
+      properties:
+        holderId:
+          type: string
+          description: Identificador del titular
+          example: "HOLDER001"
+        percentage:
+          type: integer
+          description: Porcentaje de propiedad del titular (0-100)
+          example: 50
+          minimum: 0
+          maximum: 100
+        principal:
+          type: boolean
+          description: Indica si es el titular principal de la cuenta
+          example: true
+
+    AccountSignerRequest:
+      type: object
+      description: Firmante autorizado de cuenta empresarial con límite de operación
+      properties:
+        signerId:
+          type: string
+          description: Identificador del firmante
+          example: "SIGNER001"
+        operationLimit:
+          type: number
+          format: decimal
+          description: Límite máximo de operación autorizado para el firmante
+          example: 10000.00
+        active:
+          type: boolean
+          description: Indica si el firmante está activo
+          example: true
+
+    AccountResponse:
+      type: object
+      description: Respuesta con la información completa de una cuenta bancaria
+      properties:
+        accountId:
+          type: string
+          description: Identificador único de la cuenta generado por el sistema
+          example: "ACC001"
+        accountNumber:
+          type: string
+          description: Número visible de la cuenta para el cliente
+          example: "ACC123456789"
+        accountType:
+          type: string
+          description: Tipo de cuenta
+          enum: [SAVINGS, CURRENT, TERM_FIXED]
+          example: "SAVINGS"
+        status:
+          type: string
+          description: Estado actual de la cuenta
+          enum: [OPEN, CLOSED, BLOCKED]
+          example: "OPEN"
+        balance:
+          type: number
+          format: decimal
+          description: Saldo actual de la cuenta
+          example: 1000.00
+        currency:
+          type: string
+          description: Moneda de la cuenta
+          enum: [PEN, USD]
+          example: "PEN"
+        openedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de apertura de la cuenta en formato ISO 8601
+          example: "2026-01-15T10:30:00"
+        closedAt:
+          type: string
+          format: date-time
+          description: Fecha y hora de cierre de la cuenta. Null si la cuenta está abierta
+          example: "2026-06-01T14:00:00"
+          nullable: true
+        customerId:
+          type: string
+          description: Identificador del cliente propietario de la cuenta
+          example: "CUST001"
+        holders:
+          type: array
+          description: Lista de titulares para cuentas empresariales
+          items:
+            $ref: '#/components/schemas/AccountHolderResponse'
+          nullable: true
+        signers:
+          type: array
+          description: Lista de firmantes autorizados para cuentas empresariales
+          items:
+            $ref: '#/components/schemas/AccountSignerResponse'
+          nullable: true
+
+    AccountHolderResponse:
+      type: object
+      description: Titular de cuenta empresarial con porcentaje de propiedad
+      properties:
+        holderId:
+          type: string
+          description: Identificador del titular
+          example: "HOLDER001"
+        percentage:
+          type: integer
+          description: Porcentaje de propiedad del titular (0-100)
+          example: 50
+        principal:
+          type: boolean
+          description: Indica si es el titular principal
+          example: true
+
+    AccountSignerResponse:
+      type: object
+      description: Firmante autorizado de cuenta empresarial
+      properties:
+        signerId:
+          type: string
+          description: Identificador del firmante
+          example: "SIGNER001"
+        operationLimit:
+          type: number
+          format: decimal
+          description: Límite máximo de operación autorizado
+          example: 10000.00
+        active:
+          type: boolean
+          description: Indica si el firmante está activo
+          example: true
+
+    BalanceResponse:
+      type: object
+      description: Respuesta con el saldo disponible de una cuenta bancaria
+      properties:
+        accountId:
+          type: string
+          description: Identificador único de la cuenta
+          example: "ACC001"
+        balance:
+          type: number
+          format: decimal
+          description: Saldo disponible actual de la cuenta
+          example: 1000.00
+        currency:
+          type: string
+          description: Moneda del saldo
+          enum: [PEN, USD]
+          example: "PEN"
+        cached:
+          type: boolean
+          description: Indica si el valor fue obtenido desde caché Redis (true) o directamente desde MongoDB (false)
+          example: false
+
+    AccountValidationResponse:
+      type: object
+      description: |
+        Respuesta de validación de cuenta para transferencias inter-servicio.
+        Utilizado por transfers-service para validar que una cuenta existe, está operativa
+        y cumple los requisitos antes de iniciar una transferencia
+      properties:
+        valid:
+          type: boolean
+          description: Indica si la cuenta es válida para realizar transferencias
+          example: true
+        accountId:
+          type: string
+          description: Identificador único de la cuenta
+          example: "ACC001"
+        customerId:
+          type: string
+          description: Identificador del cliente propietario
+          example: "CUST001"
+        status:
+          type: string
+          description: Estado de la cuenta
+          enum: [OPEN, CLOSED, BLOCKED]
+          example: "OPEN"
+        balance:
+          type: number
+          format: decimal
+          description: Saldo disponible actual de la cuenta
+          example: 3000.00
+        productType:
+          type: string
+          description: Tipo de producto de la cuenta
+          enum: [SAVINGS, CURRENT, TERM_FIXED]
+          example: "SAVINGS"
+        maxFreeMovements:
+          type: integer
+          description: Máximo de movimientos gratuitos por mes. Null si no aplica
+          example: 5
+          nullable: true
+        commissionPerExcessMovement:
+          type: number
+          format: decimal
+          description: Comisión por movimiento excedente. Null si no aplica
+          example: 2.50
+          nullable: true
+        hasOverdueDebt:
+          type: boolean
+          description: Indica si el cliente tiene deuda vencida
+          example: false
+
+    DepositRequest:
+      type: object
+      required:
+        - amount
+        - channel
+      description: Solicitud para realizar un depósito en una cuenta bancaria
+      properties:
+        amount:
+          type: number
+          format: decimal
+          description: Monto a depositar. Debe ser mayor a 0 y menor o igual a 1,000,000
+          example: 500.00
+          minimum: 0.01
+          maximum: 1000000.00
+        description:
+          type: string
+          description: Descripción opcional del motivo del depósito
+          example: "Depósito de sueldo"
+          nullable: true
+        channel:
+          type: string
+          description: |
+            Canal desde donde se realiza el depósito.
+            - BRANCH: sucursal física
+            - ATM: cajero automático
+            - MOBILE: aplicación móvil
+            - WEB: banca en línea
+          enum: [BRANCH, ATM, MOBILE, WEB]
+          example: "WEB"
+        referenceId:
+          type: string
+          description: Referencia externa para trazabilidad del depósito
+          example: "REF001"
+          nullable: true
+
+    WithdrawalRequest:
+      type: object
+      required:
+        - amount
+        - channel
+      description: Solicitud para realizar un retiro de una cuenta bancaria
+      properties:
+        amount:
+          type: number
+          format: decimal
+          description: Monto a retirar. Debe ser mayor a 0 y menor o igual a 500,000
+          example: 200.00
+          minimum: 0.01
+          maximum: 500000.00
+        description:
+          type: string
+          description: Descripción opcional del motivo del retiro
+          example: "Retiro en cajero"
+          nullable: true
+        channel:
+          type: string
+          description: |
+            Canal desde donde se realiza el retiro.
+            - BRANCH: sucursal física
+            - ATM: cajero automático
+            - MOBILE: aplicación móvil
+            - WEB: banca en línea
+          enum: [BRANCH, ATM, MOBILE, WEB]
+          example: "ATM"
+        referenceId:
+          type: string
+          description: Referencia externa para trazabilidad del retiro
+          example: "REF002"
+          nullable: true
+
+    MovementResponse:
+      type: object
+      description: Respuesta con los detalles de un movimiento bancario
+      properties:
+        movementId:
+          type: string
+          description: Identificador único del movimiento
+          example: "MOV001"
+        accountId:
+          type: string
+          description: Identificador de la cuenta asociada al movimiento
+          example: "ACC001"
+        movementType:
+          type: string
+          description: |
+            Tipo de movimiento realizado.
+            - DEPOSIT: depósito de fondos
+            - WITHDRAWAL: retiro de fondos
+            - TRANSFER_IN: transferencia entrante
+            - TRANSFER_OUT: transferencia saliente
+            - COMMISSION: comisión aplicada
+            - PAYMENT: pago realizado
+            - INTEREST: interés acreditado
+          enum: [DEPOSIT, WITHDRAWAL, TRANSFER_IN, TRANSFER_OUT, COMMISSION, PAYMENT, INTEREST]
+          example: "DEPOSIT"
+        amount:
+          type: number
+          format: decimal
+          description: Monto del movimiento
+          example: 500.00
+        balanceAfter:
+          type: number
+          format: decimal
+          description: Saldo de la cuenta después de ejecutar el movimiento
+          example: 1500.00
+        commission:
+          type: number
+          format: decimal
+          description: Comisión aplicada al movimiento. 0 si no se aplicó comisión
+          example: 0.00
+        description:
+          type: string
+          description: Descripción del motivo del movimiento
+          example: "Depósito de sueldo"
+        occurredAt:
+          type: string
+          format: date-time
+          description: Fecha y hora en que ocurrió el movimiento en formato ISO 8601
+          example: "2026-11-14T10:30:00"
+
+    MovementCountResponse:
+      type: object
+      description: Respuesta con el contador de movimientos del mes actual
+      properties:
+        accountId:
+          type: string
+          description: Identificador único de la cuenta
+          example: "ACC001"
+        movementCount:
+          type: integer
+          description: Cantidad de movimientos realizados en el mes actual
+          example: 5
+        month:
+          type: string
+          description: Mes al que corresponde el contador en formato yyyy-MM
+          example: "2026-11"
+
+    PageResponse_AccountResponse:
+      type: object
+      description: Respuesta paginada para listados de cuentas
+      properties:
+        content:
+          type: array
+          description: Lista de cuentas en la página actual
+          items:
+            $ref: '#/components/schemas/AccountResponse'
+        page:
+          type: integer
+          description: Número de página actual (base 0)
+          example: 0
+        size:
+          type: integer
+          description: Tamaño de la página
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          description: Total de elementos disponibles
+          example: 150
+        totalPages:
+          type: integer
+          description: Total de páginas disponibles
+          example: 8
+        first:
+          type: boolean
+          description: Indica si es la primera página
+          example: true
+        last:
+          type: boolean
+          description: Indica si es la última página
+          example: false
+
+    PageResponse_MovementResponse:
+      type: object
+      description: Respuesta paginada para listados de movimientos
+      properties:
+        content:
+          type: array
+          description: Lista de movimientos en la página actual
+          items:
+            $ref: '#/components/schemas/MovementResponse'
+        page:
+          type: integer
+          description: Número de página actual (base 0)
+          example: 0
+        size:
+          type: integer
+          description: Tamaño de la página
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          description: Total de elementos disponibles
+          example: 50
+        totalPages:
+          type: integer
+          description: Total de páginas disponibles
+          example: 3
+        first:
+          type: boolean
+          description: Indica si es la primera página
+          example: true
+        last:
+          type: boolean
+          description: Indica si es la última página
+          example: false
+
+    ApiError:
+      type: object
+      description: |
+        Cuerpo estándar de error de la API Yanki.
+        Todos los errores siguen esta estructura uniforme para facilitar el manejo de errores en los clientes
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Momento exacto en que se generó el error en formato ISO 8601
+          example: "2024-01-15T10:30:00Z"
+        status:
+          type: integer
+          format: int32
+          description: Código de estado HTTP estándar
+          example: 400
+        error:
+          type: string
+          description: Descripción textual del código de estado HTTP
+          example: "Bad Request"
+        code:
+          type: string
+          description: Código de negocio específico del error para manejo programático
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          description: Descripción legible del error en español
+          example: "El tipo de cuenta es obligatorio"
+        path:
+          type: string
+          description: Ruta de la API que originó el error
+          example: "/api/accounts"
+        details:
+          type: object
+          description: Detalle adicional del error, como errores de validación por campo
+          additionalProperties: true
+          nullable: true
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtenido mediante el endpoint /auth/login del auth-service
+
+security:
+  - BearerAuth: []
