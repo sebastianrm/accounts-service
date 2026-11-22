@@ -74,12 +74,13 @@ accounts-service/
 │   │   │   └── adapter/           # RedisCacheAdapter implementing CachePort
 │   │   └── messaging/
 │   │       ├── adapter/           # KafkaEventAdapter implementing EventPublisherPort
+│   │       ├── AccountEventPublisher # Outbound Kafka publisher (5 topics)
 │   │       └── AccountEventConsumer # 8 inbound Kafka listeners with idempotency
 │   └── interfaces/rest/           # DRIVING ADAPTERS — HTTP entry points
 │       ├── controller/            # AccountController (11 endpoints)
 │       ├── dto/                   # Request/Response DTOs
 │       └── GlobalExceptionHandler.java
-├── src/test/java/                 # 106 unit tests (domain + infrastructure + interfaces)
+├── src/test/java/                 # 132 unit tests (domain + infrastructure + interfaces)
 ├── pom.xml                        # Maven: Spring Boot 3.3.5, RxJava 3, Kafka, Redis
 ├── Dockerfile                     # Multi-stage build
 ├── README.md                      # Human-facing docs, hexagonal audit report

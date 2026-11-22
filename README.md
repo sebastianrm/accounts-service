@@ -490,6 +490,8 @@ public class Movement {
 | Clave | Contenido | TTL | Invalidación |
 |---|---|---|---|
 | `yanki:accounts:balance:{accountId}` | Saldo actual | 5m | Cada movement |
+| `yanki:accounts:movement-count:{accountId}:{YYYY-MM}` | Contador mensual movimientos | Fin de mes | Cada movement, cleanup job día 1 |
+| `yanki:accounts:commission-config:{accountId}` | Parámetros comisión | 1h | Actualización cuenta |
 
 ---
 
